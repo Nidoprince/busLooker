@@ -1,0 +1,84 @@
+<html>
+  <head>
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      // Load the Visualization API and the corechart package.
+      google.charts.load('current', {'packages':['table']});
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(initialize("Iringa","Singida",False));
+	  
+	  function initialize(city1,city2,comments) 
+	  {
+		var opts = {sendMethod: 'auto'};
+		// Replace the data source URL on next line with your data source URL.
+		var query = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1ewyceHxRFIapD-nmzmrHMeE8ZMwkaWHNlrjqx1ezCOw/edit?usp=sharing');
+		// Optional request to return only column C and the sum of column B, grouped by C members.
+		if(comments)
+		{
+		 query.setQuery('select F, E, D, G, H, I, J, K, L, M, N where B = "'+city1+'" and C = "'+city2+'"');
+		}
+		else
+		{
+		 query.setQuery('select F, E, D, G, H, I, J, K, L, M where B = "'+city1+'" and C = "'+city2+'"');
+		}
+		// Send the query with a callback function.
+		query.send(handleQueryResponse);
+	  }
+
+	  function handleQueryResponse(response) 
+	  {
+		// Called when the query response is returned.
+		if (response.isError()) {
+			alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+			return;
+		}
+
+		var data = response.getDataTable();
+		var chart = new google.visualization.Table(document.getElementById('chart_div'));
+		chart.draw(data, {width: 300, height: 300, is3D: false});
+
+	  }
+	  function testFunction()
+	  {
+		var city1 = document.getElementById("fromCity").value
+		var city2 = document.getElementById("toCity").value
+		var commentShow = document.getElementById("comments").checked
+		initialize(city1,city2,commentShow)
+	  }
+    </script>
+  </head>
+
+  <body>
+    <!--Div that will hold the pie chart-->
+	
+	 <table>
+	  <tr>
+	   <td>
+	    From
+	   </td>
+	   <td>
+	    <input type="text" id="fromCity">
+	   </td>
+	  </tr>
+	  <tr>
+	   <td>
+	    To
+	   </td>
+	   <td>
+	    <input type="text" id="toCity">
+	   </td>
+	  </tr>
+	  <tr>
+	   <td>
+	    Comments?
+	   </td>
+	   <td>
+	    <input type="checkbox" id="comments">
+	   </td>
+	  </tr>
+	 </table>
+	<button onclick="testFunction()">Submit</button>
+    <div id="chart_div"></div>
+  </body>
+</html>
